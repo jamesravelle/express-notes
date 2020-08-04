@@ -2,6 +2,7 @@
 // =============================================================
 var express = require("express");
 var path = require("path");
+var fs = require('fs');
 // Sets up the Express App
 // =============================================================
 var app = express();
@@ -9,9 +10,9 @@ var PORT = process.env.PORT || 3001;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use(express.static('public'))
 // Variable
-var reservations = [];
+var notes = [];
 
 // Routes
 app.get("/", function(req, res) {
@@ -23,16 +24,26 @@ app.get("/notes", function(req, res) {
 });
 
 app.get("/api/notes", function(req, res) {
-    // var newReservation = req.body;
-    // console.log(newReservation);
-    res.json(reservations);
+  res.json(notes);
 });
 
-app.post("/api/hotes", function(req, res) {
-    var newReservation = req.body;
-    console.log(newReservation);
-    reservations.push(newReservation);
-    res.json(newReservation);
+app.post("/api/notes", function(req, res) {
+    var newNote = req.body;
+    notes.push(newNote);
+    let data = JSON.stringify(notes)
+    fs.writeFile("db/db.json", data, (err) => { 
+      if (err) 
+        console.log(err); 
+      else { 
+        res.json(data);
+      } 
+    }); 
+});
+
+app.delete('/api/notes/:id', function(req, res) {
+  var chosen = req.params.id;
+  console.log(chosen);
+  return res.json(chosen)
 });
 
 // Starts the server to begin listening
