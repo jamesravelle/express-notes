@@ -42,13 +42,12 @@ app.post("/api/notes", function(req, res) {
 
 app.delete('/api/notes/:id', function(req, res) {
   var chosen = req.params.id;
-  console.log(chosen);
-  let data = notes.filter(notes => notes['id'] !== chosen)
-  fs.writeFile("db/db.json", JSON.stringify(data), (err) => { 
+  notes = notes.filter(notes => notes['id'] !== chosen)
+  fs.writeFile("db/db.json", JSON.stringify(notes), (err) => { 
     if (err) 
       console.log(err); 
     else { 
-      res.json(data);
+      res.json(notes);
     } 
   }); 
   // Render the new object that was printed. Maybe export the renderNoteList from index.js and use it here?
