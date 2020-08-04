@@ -3,6 +3,7 @@ const $noteText = $(".note-textarea");
 const $saveNoteBtn = $(".save-note");
 const $newNoteBtn = $(".new-note");
 const $noteList = $(".list-container .list-group");
+let idValue = 0;
 
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
@@ -27,7 +28,7 @@ const saveNote = (note) => {
 // A function for deleting a note from the db
 const deleteNote = (id) => {
   return $.ajax({
-    url: "api/notes/" + id,
+    url: "/api/notes/" + id,
     method: "DELETE",
   });
 };
@@ -53,9 +54,10 @@ const renderActiveNote = () => {
 const handleNoteSave = function () {
   const newNote = {
     title: $noteTitle.val(),
-    text: $noteText.val()
+    text: $noteText.val(),
+    id:idValue
   };
-
+  idValue++;
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
@@ -101,7 +103,6 @@ const handleRenderSaveBtn = function () {
   }
 };
 
-let idValue = 0;
 // Render's the list of note titles
 const renderNoteList = (notes) => {
   $noteList.empty();
@@ -111,8 +112,7 @@ const renderNoteList = (notes) => {
   // Returns jquery object for li with given text and delete button
   // unless withDeleteButton argument is provided as false
   const create$li = (text, withDeleteButton = true) => {
-    idValue++;
-    const $li = $("<li class='list-group-item' data-id='" + idValue + "'>");
+    const $li = $("<li class='list-group-item'>");
     const $span = $("<span>").text(text);
     $li.append($span);
 
@@ -129,8 +129,9 @@ const renderNoteList = (notes) => {
     noteListItems.push(create$li("No saved Notes", false));
   }
 
-  notes.forEach((note) => {
+  notes.forEach((note, i) => {
     const $li = create$li(note.title).data(note);
+    $li.attr('data-id',i);
     noteListItems.push($li);
   });
 
@@ -151,3 +152,4 @@ $noteText.on("keyup", handleRenderSaveBtn);
 
 // Gets and renders the initial list of notes
 getAndRenderNotes();
+

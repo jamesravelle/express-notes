@@ -43,7 +43,17 @@ app.post("/api/notes", function(req, res) {
 app.delete('/api/notes/:id', function(req, res) {
   var chosen = req.params.id;
   console.log(chosen);
-  return res.json(chosen)
+  let data = notes.filter(notes => notes['id'] !== chosen)
+  fs.writeFile("db/db.json", JSON.stringify(data), (err) => { 
+    if (err) 
+      console.log(err); 
+    else { 
+      res.json(data);
+    } 
+  }); 
+  // Render the new object that was printed. Maybe export the renderNoteList from index.js and use it here?
+  // renderNoteList(data);
+  res.status(200);
 });
 
 // Starts the server to begin listening
